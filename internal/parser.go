@@ -187,10 +187,7 @@ func ParseAndGenerate(config notion_blog.BlogConfig) error {
 	// Set GITHUB_ACTIONS info variables
 	// https://docs.github.com/en/actions/learn-github-actions/workflow-commands-for-github-actions
 	if os.Getenv("GITHUB_ACTIONS") == "true" {
-		fmt.Println("Setting Github Actions output")
 		fmt.Printf("::set-output name=articles_published::%d\n", changed)
-	} else {
-		fmt.Println("Not setting Github Actions output")
 	}
 
 	return nil
