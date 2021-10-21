@@ -39,7 +39,7 @@ inputs:
   filter-value:
     description: Values of the filter to apply to the Notion articles database.
     required: false
-    default: []
+    default: ''
   published-value:
     description: Value to which the filter property will be set after generating the content.
     required: false
