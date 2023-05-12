@@ -101,6 +101,12 @@ func getImage(imgURL string, config BlogConfig) (_ string, err error) {
 	}
 	defer resp.Body.Close()
 
+	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
+	if !statusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("couldn't download image, server returned an error: %d\n%s", resp.StatusCode, body)
+	}
+
 	err = os.MkdirAll(config.ImagesFolder, 0777)
 	if err != nil {
 		return "", fmt.Errorf("couldn't create images folder: %s", err)
