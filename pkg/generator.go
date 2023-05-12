@@ -115,7 +115,11 @@ func getImage(imgURL string, config BlogConfig) (_ string, err error) {
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
-	return filepath.Join(config.ImagesLink, name), err
+	if err != nil {
+		return "", fmt.Errorf("couldn't save image to file: %s", err)
+	}
+
+	return filepath.Join(config.ImagesLink, name), nil
 }
 
 func Generate(w io.Writer, page notionapi.Page, blocks []notionapi.Block, config BlogConfig) error {
