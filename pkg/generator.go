@@ -101,6 +101,12 @@ func getImage(imgURL string, config BlogConfig) (_ string, err error) {
 	}
 	defer resp.Body.Close()
 
+	statusOK := resp.StatusCode >= 200 && resp.StatusCode < 300
+	if !statusOK {
+		body, _ := io.ReadAll(resp.Body)
+		return "", fmt.Errorf("couldn't download image, server returned an error: %d\n%s", resp.StatusCode, body)
+	}
+
 	err = os.MkdirAll(config.ImagesFolder, 0777)
 	if err != nil {
 		return "", fmt.Errorf("couldn't create images folder: %s", err)
@@ -115,7 +121,11 @@ func getImage(imgURL string, config BlogConfig) (_ string, err error) {
 
 	// Write the body to file
 	_, err = io.Copy(out, resp.Body)
-	return filepath.Join(config.ImagesLink, name), err
+	if err != nil {
+		return "", fmt.Errorf("couldn't save image to file: %s", err)
+	}
+
+	return filepath.Join(config.ImagesLink, name), nil
 }
 
 func Generate(w io.Writer, page notionapi.Page, blocks []notionapi.Block, config BlogConfig) error {
